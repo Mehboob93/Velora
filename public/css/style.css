@@ -110,3 +110,59 @@ body{
     padding-left: 0;
     padding-right: 0;
 }
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    header {
+        padding: 30px 15px;
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+
+    main {
+        margin: 25px auto;
+        padding: 0 15px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 20px 10px;
+    }
+
+    .stat-card h3 {
+        font-size: 14px;
+    }
+
+    .stat-card p {
+        font-size: 25px;
+    }
+
+    #jobForm {
+        grid-template-columns: 1fr;
+    }
+
+    .applications-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .applications-header > div {
+        flex-direction: column;
+    }
+
+    #search,
+    #filterStatus,
+    #sortDate {
+        width: 100%;
+    }
+}

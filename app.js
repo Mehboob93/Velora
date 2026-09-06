@@ -26,7 +26,7 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
 app.get("/", (req,res) => {
-    res.send("i am home page");
+    res.send("I am Home page");
 });
 
 //index Route

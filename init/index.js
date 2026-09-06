@@ -1,9 +1,10 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const initData = require("./data");
 const Listing = require("../models/listing.js");
 
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/velora";
+const MONGO_URL = process.env.MONGO_URL;
 main().then(() => {
     console.log("connected to db ");
 }).catch((err) => {
