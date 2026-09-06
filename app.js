@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -6,7 +7,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/velora";
+const MONGO_URL = process.env.MONGO_URL;
 main().then(() => {
     console.log("connected to db ");
 }).catch((err) => {
@@ -92,6 +93,6 @@ app.delete("/listings/:id", async (req, res) => {
 //     console.log("sample was saves");
 //     res.send("successful  testing");
 // });
-app.listen(8080, (req,res) => {
-    console.log("Server is listening to 8080");
+app.listen(process.env.PORT || 8080, () => {
+    console.log(`Server is listening on port ${process.env.PORT || 8080}`);
 });
