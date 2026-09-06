@@ -8,7 +8,8 @@ body{
     flex: 1;
 }
 
-/*navbar*/
+
+/* navbar */
 .navbar{ 
     .navbar {
     height: 5rem !important;
@@ -19,6 +20,7 @@ body{
 }
     
 }
+
 
 .fm{
     color: #fe424d;
@@ -98,14 +100,14 @@ body{
 }
 
 /* edit page */
-
-    .edit-btn {
+.edit-btn {
     background-color: #fe424d !important;
     border: none !important;
     border-radius: 8px;
     color: white !important;
-    padding: 8px 20px;
+    padding: 10px 20px;
     font-size: 1rem;
+    text-align: center !important;
 }
 
 
