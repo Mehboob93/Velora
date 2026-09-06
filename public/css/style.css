@@ -10,8 +10,13 @@ body{
 
 /*navbar*/
 .navbar{ 
-    height: 5rem; 
+    .navbar {
+    height: 5rem !important;
     background-color: white !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
     
 }
 
@@ -93,10 +98,16 @@ body{
 }
 
 /* edit page */
-.edit-btn{
+
+    .edit-btn {
     background-color: #fe424d !important;
-    border: none !important
+    border: none !important;
+    border-radius: 8px;
+    color: white !important;
+    padding: 8px 20px;
+    font-size: 1rem;
 }
+
 
 /* show page */
 .show-img{
