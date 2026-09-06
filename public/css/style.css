@@ -12,8 +12,7 @@ body{
 .navbar{ 
     height: 5rem; 
     background-color: white;
-    display: flex;
-    align-items: center;
+    
 }
 
 .fm{
