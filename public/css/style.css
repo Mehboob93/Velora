@@ -9,9 +9,11 @@ body{
 }
 
 /*navbar*/
-.navbar{
-    height: 5rem;
+.navbar{ 
+    height: 5rem; 
     background-color: white;
+    display: flex;
+    align-items: center;
 }
 
 .fm{
