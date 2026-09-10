@@ -6,6 +6,7 @@ const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 main().then(() => {
@@ -49,11 +50,14 @@ app.get("/listings/:id", async(req, res) => {
 });
 
 //create route
-app.post("/listings",async (req, res) => {
+app.post("/listings", wrapAsync(async (req, res) => {
+    
     const newListing = new Listing(req.body);
     await newListing.save();
     res.redirect("/listings");
-});
+    
+})
+);
 
 //update route
 app.get("/listings/:id/edit",async (req,res) => {
@@ -93,6 +97,11 @@ app.delete("/listings/:id", async (req, res) => {
 //     console.log("sample was saves");
 //     res.send("successful  testing");
 // });
+
+// app.use((err,req,res,next) =>{
+//     res.send("Some thing went Wrong");
+// });
+
 app.listen(process.env.PORT || 8080, () => {
     console.log(`Server is listening on port ${process.env.PORT || 8080}`);
 });
