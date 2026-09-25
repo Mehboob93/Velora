@@ -1,0 +1,192 @@
+body{
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.container {
+    flex: 1;
+}
+
+
+/* navbar */
+.navbar{ 
+    .navbar {
+    height: 5rem !important;
+    background-color: white !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+    
+}
+
+
+.fm{
+    color: #fe424d;
+    font-size: 2rem;
+}
+.nav-link{
+    color:#222222 !important;
+}
+
+/* footer */
+.f-info-links a{
+    text-decoration: none;
+    color :#222222;
+}
+
+.f-info-links a:hover{
+    text-decoration: underline;
+}
+.f-info-links,.f-info-socials {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin: 0.3rem 0;
+}
+
+.f-info-socials i {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+.f-info{
+    height: 8rem;
+    background-color: #ebebeb;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+}
+
+
+/* cards */
+.listing-card {
+    border: none !important;
+    margin-bottom:2em;
+}
+.card-img-top{
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body{
+    padding:0% !important;
+}
+.card-text{
+    font-weight: 400;
+}
+.listing-link{
+    text-decoration: none;
+}
+
+/* card effect */
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+    opacity: 0.2;
+    background-color: white;
+}
+
+/* new page */
+.add-btn{
+    background-color: #fe424d !important;
+    border: none !important
+}
+
+/* edit page */
+.edit-btn {
+    background-color: #fe424d !important;
+    border: none !important;
+    border-radius: 8px;
+    color: white !important;
+    padding: 10px 20px;
+    font-size: 1rem;
+    text-align: center !important;
+}
+
+
+/* show page */
+.show-img{
+    height: 30vh;
+}
+
+.btns{
+    display:flex;
+}
+
+.show-card{
+    padding-left: 0;
+    padding-right: 0;
+}
+.btns {
+    display: flex;
+    gap: 20px;
+    margin-left: 16.67%;
+    margin-top: 20px;
+}
+/* map */
+#map {
+    height: 400px;
+    width: 80%;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    header {
+        padding: 30px 15px;
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+
+    main {
+        margin: 25px auto;
+        padding: 0 15px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .stat-card {
+        padding: 20px 10px;
+    }
+
+    .stat-card h3 {
+        font-size: 14px;
+    }
+
+    .stat-card p {
+        font-size: 25px;
+    }
+
+    #jobForm {
+        grid-template-columns: 1fr;
+    }
+
+    .applications-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .applications-header > div {
+        flex-direction: column;
+    }
+
+    #search,
+    #filterStatus,
+    #sortDate {
+        width: 100%;
+    }
+}
