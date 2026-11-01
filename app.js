@@ -87,7 +87,8 @@ app.use((req, res, next) =>{
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
     res.locals.currentPath = req.path;
-    res.locals.currentType = "";
+    res.locals.currentType = req.query.type || "";
+    res.locals.isHome = req.path === "/listings" && !req.query.type && !req.query.q;
     next();
 });
 
