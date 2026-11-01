@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= pageTitle ? `${pageTitle} | Velora` : "Velora | Homes for sale and rent in India" %></title>
-    <meta name="description" content="<%= pageDescription || 'Browse apartments, villas, farmhouses, plots and commercial spaces to buy or rent on Velora.' %>">
+    <title><%= typeof pageTitle !== "undefined" && pageTitle ? `${pageTitle} | Velora` : "Velora | Homes for sale and rent in India" %></title>
+    <meta name="description" content="<%= typeof pageDescription !== 'undefined' && pageDescription ? pageDescription : 'Browse apartments, villas, farmhouses, plots and commercial spaces to buy or rent on Velora.' %>">
     <meta name="theme-color" content="#0f4c45">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
 
