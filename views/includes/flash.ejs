@@ -1,17 +1,13 @@
-<% const flashOk = success || []; const flashBad = error || []; %>
-<% if (flashOk.length || flashBad.length) { %>
-<div class="page-wrap flash-stack" aria-live="polite">
-    <% for (const msg of flashOk) { %>
-    <div class="alert alert-success alert-dismissible fade show" role="status" data-autodismiss>
-        <i class="fa-solid fa-circle-check me-2" aria-hidden="true"></i><%= msg %>
+<% if(success && success.length) { %>
+    <div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert"><%= success%>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    
     <% } %>
-    <% for (const msg of flashBad) { %>
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fa-solid fa-circle-exclamation me-2" aria-hidden="true"></i><%= msg %>
+
+    <% if(error && error.length) { %>
+    <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert"><%= error%>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    
     <% } %>
-</div>
-<% } %>

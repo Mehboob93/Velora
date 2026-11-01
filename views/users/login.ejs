@@ -1,21 +1,33 @@
 <% layout("/layouts/boilerplate") %>
-<div class="page-wrap page">
-    <div class="auth-wrap form-card">
-        <h1>Log in</h1>
-        <p class="lead-sm">Welcome back. Log in to list properties and leave reviews.</p>
+
+<div class="row mt-3">
+    <h1 class="col-6 offset-3">Login</h1>
+    <div class="col-6 offset-3">
         <form action="/login" method="post" class="needs-validation" novalidate>
             <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input name="username" id="username" type="text" class="form-control" autocomplete="username" required autofocus>
-                <div class="invalid-feedback">Enter your username.</div>
-            </div>
-            <div class="mb-4">
-                <label for="password" class="form-label">Password</label>
-                <input name="password" id="password" type="password" class="form-control" autocomplete="current-password" required>
-                <div class="invalid-feedback">Enter your password.</div>
-            </div>
-            <button class="btn btn-vel btn-lg w-100" type="submit" data-loading="Logging in…">Log in</button>
+            <label for="username" class="form-label">Username</label>
+            <input 
+                name="username"
+                id="username"
+                 type="text"
+                 class="form-control"
+                 required
+                  />
+            <div class="valid-feedback">Looks Good</div>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input 
+                name="password"
+                id="password"
+                 type="password"
+                 class="form-control"
+                 required
+                  />
+        </div>
+        <form>
+            <button class="btn btn-success">Login</button>
         </form>
-        <p class="auth-foot">New to Velora? <a href="/signup">Create an account</a></p>
+        </form>
     </div>
 </div>
