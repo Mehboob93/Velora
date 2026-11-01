@@ -1,0 +1,35 @@
+<%
+  // Usage: include("../includes/listingCard.ejs", { listing, large: false })
+  const cardStats = ratingStats(listing.reviews || []);
+  const isLarge = Boolean(large);
+  const cardImage = listing.image && listing.image.url ? optimizeImage(listing.image.url, isLarge ? 1000 : 800, isLarge ? 667 : 600) : "/images/placeholder.svg";
+%>
+<a href="/listings/<%= listing._id %>" class="listing-link">
+  <article class="prop-card <%= isLarge ? 'prop-card--featured' : '' %>">
+    <div class="prop-card__media">
+      <img src="<%= cardImage %>" alt="<%= listing.title %> in <%= listing.location %>" loading="lazy" width="800" height="600" onerror="this.onerror=null;this.src='/images/placeholder.svg'">
+      <div class="badges">
+        <span class="badge-v <%= listing.listingType === 'sale' ? 'badge-v--sale' : 'badge-v--rent' %>"><%= listingTypeLabel(listing) %></span>
+        <% if (listing.featured) { %><span class="badge-v badge-v--featured"><i class="fa-solid fa-star" aria-hidden="true"></i> Featured</span><% } %>
+      </div>
+    </div>
+    <div class="prop-card__body">
+      <div class="prop-card__top">
+      <p class="prop-card__price"><span><%= priceLabel(listing) %></span><% if (priceSuffix(listing)) { %><small><%= priceSuffix(listing) %></small><% } %><span class="gst-note">+18% GST</span></p>
+      <% if (cardStats.count) { %><span class="rating-mini" title="<%= cardStats.count %> review<%= cardStats.count === 1 ? '' : 's' %>"><i class="fa-solid fa-star" aria-hidden="true"></i><%= cardStats.average.toFixed(1) %></span><% } %>
+      </div>
+      <h3 class="prop-card__title"><%= listing.title %></h3>
+      <p class="prop-card__loc"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><%= listing.location %></p>
+      <% const hasBeds = listing.bedrooms !== undefined && listing.bedrooms !== null; %>
+      <% const hasBaths = listing.bathrooms !== undefined && listing.bathrooms !== null; %>
+      <% const areaText = formatArea(listing.area); %>
+      <% if (hasBeds || hasBaths || areaText) { %>
+      <ul class="facts">
+        <% if (hasBeds) { %><li title="Bedrooms"><i class="fa-solid fa-bed" aria-hidden="true"></i><%= listing.bedrooms === 0 ? "Studio" : `${listing.bedrooms} bed` %></li><% } %>
+        <% if (hasBaths) { %><li title="Bathrooms"><i class="fa-solid fa-bath" aria-hidden="true"></i><%= listing.bathrooms %> bath</li><% } %>
+        <% if (areaText) { %><li title="Built-up area"><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i><%= areaText %></li><% } %>
+      </ul>
+      <% } %>
+    </div>
+  </article>
+</a>

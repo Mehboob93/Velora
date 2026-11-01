@@ -1,0 +1,120 @@
+<% layout("/layouts/boilerplate") %>
+
+<section class="hero" aria-labelledby="hero-title">
+    <% if (heroListing && heroListing.image && heroListing.image.url) { %>
+    <img class="hero__bg" src="<%= optimizeImage(heroListing.image.url, 1800, 900) %>" alt="" fetchpriority="high" onerror="this.remove()">
+    <% } %>
+    <div class="page-wrap hero__inner">
+        <h1 id="hero-title">Find your next home in India</h1>
+        <p class="lead-v">Browse apartments, villas, farmhouses and plots to buy or rent, listed directly by owners and agents.</p>
+    </div>
+    <% if (heroListing) { %>
+    <a class="hero__caption" href="/listings/<%= heroListing._id %>">
+        Pictured: <%= heroListing.title %>, <%= priceLabel(heroListing) %><%= priceSuffix(heroListing) %>
+    </a>
+    <% } %>
+</section>
+
+<div class="page-wrap">
+    <form class="search-panel" action="/listings" method="get" role="search" aria-label="Search properties" data-search-panel>
+        <div class="segmented" role="radiogroup" aria-label="I want to">
+            <input type="radio" name="type" id="type-sale" value="sale" checked>
+            <label for="type-sale">Buy</label>
+            <input type="radio" name="type" id="type-rent" value="rent">
+            <label for="type-rent">Rent</label>
+        </div>
+        <div class="search-grid">
+            <div>
+                <label class="form-label" for="hero-q">Location or keyword</label>
+                <input class="form-control form-control-lg" id="hero-q" name="q" type="search" maxlength="100" placeholder="Try “Hyderabad” or “pool villa”">
+            </div>
+            <div>
+                <label class="form-label" for="hero-category">Property type</label>
+                <select class="form-select form-select-lg" id="hero-category" name="category">
+                    <option value="">Any type</option>
+                    <% for (const c of categories) { %><option value="<%= c %>"><%= c %></option><% } %>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="hero-budget-sale">Max budget</label>
+                <select class="form-select form-select-lg" id="hero-budget-sale" name="maxPrice" data-budget="sale">
+                    <option value="">Any budget</option>
+                    <option value="5000000">Up to ₹50 Lakh</option>
+                    <option value="10000000">Up to ₹1 Cr</option>
+                    <option value="20000000">Up to ₹2 Cr</option>
+                    <option value="50000000">Up to ₹5 Cr</option>
+                    <option value="100000000">Up to ₹10 Cr</option>
+                </select>
+                <select class="form-select form-select-lg" id="hero-budget-rent" name="maxPrice" data-budget="rent" hidden disabled>
+                    <option value="">Any budget</option>
+                    <option value="15000">Up to ₹15,000/month</option>
+                    <option value="30000">Up to ₹30,000/month</option>
+                    <option value="60000">Up to ₹60,000/month</option>
+                    <option value="100000">Up to ₹1,00,000/month</option>
+                    <option value="250000">Up to ₹2,50,000/month</option>
+                </select>
+            </div>
+            <button class="btn btn-accent btn-lg" type="submit"><i class="fa-solid fa-magnifying-glass me-2" aria-hidden="true"></i>Search</button>
+        </div>
+    </form>
+
+    <% if (total === 0) { %>
+    <div class="state">
+        <div class="icon"><i class="fa-solid fa-house-circle-exclamation" aria-hidden="true"></i></div>
+        <h2>No properties listed yet</h2>
+        <p>Be the first to list a property on Velora, or run <code>npm run seed</code> to load sample listings.</p>
+        <div class="actions"><a class="btn btn-accent" href="/listings/new">List your property</a></div>
+    </div>
+    <% } else { %>
+
+    <% if (categoryCounts.length) { %>
+    <section class="section" aria-labelledby="types-title">
+        <div class="section-head"><h2 id="types-title">Browse by property type</h2></div>
+        <div class="chip-row">
+            <% for (const c of categoryCounts) { %>
+            <a class="chip" href="/listings?category=<%= encodeURIComponent(c.name) %>"><%= c.name %> <small><%= c.count %></small></a>
+            <% } %>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (featured.length) { %>
+    <section class="section" aria-labelledby="featured-title">
+        <div class="section-head">
+            <div>
+                <h2 id="featured-title">Featured properties</h2>
+                <p>Hand-picked homes that stand out for their location and finish.</p>
+            </div>
+            <a class="btn-link-v" href="/listings">View all properties</a>
+        </div>
+        <div class="card-grid card-grid--featured">
+            <% for (const listing of featured) { %><%- include("../includes/listingCard.ejs", { listing, large: true }) %><% } %>
+        </div>
+    </section>
+    <% } %>
+
+    <% if (recent.length) { %>
+    <section class="section" aria-labelledby="recent-title">
+        <div class="section-head">
+            <div>
+                <h2 id="recent-title">Recently added</h2>
+                <p>The newest listings on Velora.</p>
+            </div>
+            <a class="btn-link-v" href="/listings?sort=newest">See everything new</a>
+        </div>
+        <div class="card-grid">
+            <% for (const listing of recent) { %><%- include("../includes/listingCard.ejs", { listing, large: false }) %><% } %>
+        </div>
+    </section>
+    <% } %>
+
+    <% } %>
+
+    <section class="cta-band on-dark" aria-labelledby="cta-title">
+        <div>
+            <h2 id="cta-title">Own a property?</h2>
+            <p>List it on Velora and reach people looking to buy or rent across India. It takes a few minutes.</p>
+        </div>
+        <a class="btn btn-accent btn-lg" href="/listings/new">List your property</a>
+    </section>
+</div>

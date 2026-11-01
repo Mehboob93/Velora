@@ -1,0 +1,109 @@
+<%
+  
+  const source = formValues || listing || {};
+  const pick = (name, fallback = "") => (source[name] !== undefined && source[name] !== null ? source[name] : fallback);
+  const amenityText = Array.isArray(source.amenities) ? source.amenities.join(", ") : pick("amenities");
+  const currentType = pick("listingType", "sale");
+  const currentCategory = pick("category", "");
+  const hasListing = Boolean(listing);
+%>
+<form method="post" action="<%= action %>" novalidate class="needs-validation form-card" enctype="multipart/form-data">
+
+    <div class="form-section">
+        <h2>The basics</h2>
+        <p>A clear title and honest description get more attention.</p>
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input id="title" name="listing[title]" value="<%= pick('title') %>" placeholder="e.g. Sunny 3BHK near the metro" type="text" maxlength="120" class="form-control" required>
+            <div class="invalid-feedback">Please add a title.</div>
+        </div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <span class="form-label d-block">Listing type</span>
+                <div class="segmented" role="radiogroup" aria-label="Listing type">
+                    <input type="radio" name="listing[listingType]" id="lt-sale" value="sale" <%= currentType === 'sale' ? 'checked' : '' %>>
+                    <label for="lt-sale">For sale</label>
+                    <input type="radio" name="listing[listingType]" id="lt-rent" value="rent" <%= currentType === 'rent' ? 'checked' : '' %>>
+                    <label for="lt-rent">For rent</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="category" class="form-label">Property type</label>
+                <select id="category" name="listing[category]" class="form-select">
+                    <% for (const c of categories) { %><option value="<%= c %>" <%= currentCategory === c ? 'selected' : '' %>><%= c %></option><% } %>
+                </select>
+            </div>
+        </div>
+        <div class="mb-1">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="listing[description]" rows="6" maxlength="3000" class="form-control" placeholder="Describe the layout, surroundings and what makes this property special." required><%= pick('description') %></textarea>
+            <div class="invalid-feedback">Please add a short description.</div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h2>Price and size</h2>
+        <p>For rentals, enter the monthly rent.</p>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="price" class="form-label">Price (₹)</label>
+                <input id="price" name="listing[price]" value="<%= pick('price') %>" type="number" min="0" inputmode="numeric" class="form-control" placeholder="e.g. 8500000" required>
+                <div class="invalid-feedback">Enter a valid price.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="area" class="form-label">Area (sq ft)</label>
+                <input id="area" name="listing[area]" value="<%= pick('area') %>" type="number" min="0" inputmode="numeric" class="form-control" placeholder="Optional">
+            </div>
+            <div class="col-md-6">
+                <label for="bedrooms" class="form-label">Bedrooms</label>
+                <input id="bedrooms" name="listing[bedrooms]" value="<%= pick('bedrooms') %>" type="number" min="0" step="1" inputmode="numeric" class="form-control" placeholder="0 for a studio">
+            </div>
+            <div class="col-md-6">
+                <label for="bathrooms" class="form-label">Bathrooms</label>
+                <input id="bathrooms" name="listing[bathrooms]" value="<%= pick('bathrooms') %>" type="number" min="0" step="1" inputmode="numeric" class="form-control" placeholder="Optional">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h2>Location</h2>
+        <p>We use this to place your property on the map.</p>
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label for="location" class="form-label">Area and city</label>
+                <input id="location" name="listing[location]" value="<%= pick('location') %>" type="text" class="form-control" placeholder="e.g. Banjara Hills, Hyderabad, Telangana" required>
+                <div class="invalid-feedback">Enter the area and city.</div>
+            </div>
+            <div class="col-md-4">
+                <label for="country" class="form-label">Country</label>
+                <input id="country" name="listing[country]" value="<%= pick('country', hasListing ? '' : 'India') %>" type="text" class="form-control" required>
+                <div class="invalid-feedback">Enter the country.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <h2>Amenities</h2>
+        <p>Separate each one with a comma.</p>
+        <input id="amenities" name="listing[amenities]" value="<%= amenityText %>" type="text" maxlength="600" class="form-control" placeholder="Lift, Covered parking, Gym, Power backup" aria-label="Amenities">
+    </div>
+
+    <div class="form-section">
+        <h2>Photo</h2>
+        <% if (hasListing && listing.image && listing.image.url) { %>
+        <p>Current photo. Upload a new one only if you want to replace it.</p>
+        <img class="current-image mb-3" src="<%= optimizeImage(listing.image.url, 640, 480) %>" alt="Current listing photo" onerror="this.onerror=null;this.src='/images/placeholder.svg'">
+        <% } else { %>
+        <p>Add a bright, well-framed photo. You can leave this out and add one later.</p>
+        <% } %>
+        <label for="image" class="form-label"><%= hasListing ? "Upload a new photo" : "Upload a photo" %></label>
+        <input id="image" name="listing[image]" type="file" accept="image/png,image/jpeg,image/avif" class="form-control" data-image-input>
+        <div class="form-hint">JPG, PNG or AVIF.</div>
+        <img class="image-preview" alt="Preview of the selected photo" data-image-preview>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap pt-2">
+        <button class="btn btn-vel btn-lg" type="submit" data-loading="<%= loadingLabel %>"><%= submitLabel %></button>
+        <a class="btn btn-ghost btn-lg" href="<%= cancelHref %>">Cancel</a>
+    </div>
+</form>

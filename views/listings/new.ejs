@@ -1,0 +1,20 @@
+<% layout("/layouts/boilerplate") %>
+<div class="page-wrap page">
+    <div class="mx-auto" style="max-width: 760px;">
+        <div class="page-head">
+            <div>
+                <h1 style="font-size: clamp(1.8rem, 3.4vw, 2.5rem);">List your property</h1>
+                <p>Tell people about your home, plot or commercial space.</p>
+            </div>
+        </div>
+        <%- include("_form.ejs", {
+            action: "/listings",
+            submitLabel: "Publish listing",
+            loadingLabel: "Publishing…",
+            cancelHref: "/listings",
+            categories,
+            listing: null,
+            formValues: formValues
+        }) %>
+    </div>
+</div>
