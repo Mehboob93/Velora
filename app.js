@@ -17,6 +17,7 @@ const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
 app.use(cookieParser());
+app.set("trust proxy", 1);
 
 const listingsRouter = require("./Routes/listing.js");
 const reviewsRouter = require("./Routes/reviews.js");
@@ -61,10 +62,11 @@ const sessionOptions = {
     resave:false,
     saveUninitialized : true,
     cookie:{
-        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
-        maxAge: 7 * 24 * 60 * 60 *1000,
-        httpOnly: true,
-    },
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+},
 };
 
 

@@ -8,7 +8,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "seed": "node init/seed.js"
   },
   "keywords": [],
   "type": "commonjs",
