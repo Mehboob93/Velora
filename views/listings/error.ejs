@@ -1,9 +1,24 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-    <div class="alert alert-primary col-6 offset-3 " role="alert">
-         
-    <h4 class="alert-heading"><%=err.message%></h4>
-    
-
-</div>
+<%
+  const code = err.statusCode || 500;
+  const titles = {
+    400: "That didn’t look right",
+    403: "You don’t have access to this",
+    404: "We couldn’t find that page",
+    422: "We couldn’t process that",
+  };
+  const icon = code === 404 ? "fa-map-location-dot" : code >= 500 ? "fa-screwdriver-wrench" : "fa-circle-exclamation";
+%>
+<div class="page-wrap page">
+    <div class="state state--error">
+        <div class="code" aria-hidden="true"><%= code %></div>
+        <div class="icon"><i class="fa-solid <%= icon %>" aria-hidden="true"></i></div>
+        <h1><%= titles[code] || (code >= 500 ? "Something went wrong" : "Request problem") %></h1>
+        <p><%= err.message %></p>
+        <div class="actions">
+            <a class="btn btn-vel" href="/">Back to home</a>
+            <a class="btn btn-ghost" href="/listings">Browse properties</a>
+            <button class="btn btn-ghost" type="button" data-go-back>Go back</button>
+        </div>
+    </div>
 </div>

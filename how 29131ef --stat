@@ -1,0 +1,54 @@
+[33mcommit 2d97ebe699bf9d7bff58b8310a89e512090fbd3e[m
+Author: Mehboob <mehboobali393939@gmail.com>
+Date:   Sun Nov 1 11:19:23 2026 +0530
+
+    Updated  Velora UI and backend
+
+ .gitignore                     |    2 [32m+[m
+ README.md                      |   41 [32m+[m
+ Rotues/listing.js              |   39 [32m+[m
+ Rotues/reviews.js              |   14 [32m+[m
+ Rotues/user.js                 |   28 [32m+[m
+ app.js                         |  153 [32m+++[m
+ cloudConfig.js                 |   21 [32m+[m
+ controllers/listing.js         |  284 [32m++++[m
+ controllers/review.js          |   35 [32m+[m
+ controllers/user.js            |   43 [32m+[m
+ init/data.js                   |  352 [32m+++++[m
+ init/index.js                  |    4 [32m+[m
+ init/seed.js                   |  168 [32m+++[m
+ init/seedData.js               |  415 [32m++++++[m
+ middleware.js                  |   88 [32m++[m
+ models/listing.js              |   79 [32m++[m
+ models/review.js               |   21 [32m+[m
+ models/user.js                 |   15 [32m+[m
+ package-lock.json              | 2815 [32m++++++++++++++++++++++++++++++++++++++++[m
+ package.json                   |   36 [32m+[m
+ public/css/rating.css          |  197 [32m+++[m
+ public/css/style.css           |  389 [32m++++++[m
+ public/images/favicon.svg      |    1 [32m+[m
+ public/images/placeholder.svg  |    9 [32m+[m
+ public/js/map.js               |   29 [32m+[m
+ public/js/script.js            |  134 [32m++[m
+ schema.js                      |   62 [32m+[m
+ utils/ExpressError.js          |    8 [32m+[m
+ utils/constants.js             |   16 [32m+[m
+ utils/db.js                    |   12 [32m+[m
+ utils/format.js                |   56 [32m+[m
+ utils/geocode.js               |   20 [32m+[m
+ utils/wrapAsync.js             |    5 [32m+[m
+ views/includes/flash.ejs       |   17 [32m+[m
+ views/includes/footer.ejs      |   48 [32m+[m
+ views/includes/listingCard.ejs |   35 [32m+[m
+ views/includes/navbar.ejs      |   50 [32m+[m
+ views/layouts/boilerplate.ejs  |   37 [32m+[m
+ views/listings/_form.ejs       |  109 [32m++[m
+ views/listings/edit.ejs        |   20 [32m+[m
+ views/listings/error.ejs       |   24 [32m+[m
+ views/listings/home.ejs        |  120 [32m++[m
+ views/listings/index.ejs       |  114 [32m++[m
+ views/listings/new.ejs         |   20 [32m+[m
+ views/listings/show.ejs        |  239 [32m++++[m
+ views/users/login.ejs          |   21 [32m+[m
+ views/users/signup.ejs         |   27 [32m+[m
+ 47 files changed, 6472 insertions(+)

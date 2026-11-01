@@ -1,122 +1,114 @@
 <% layout("/layouts/boilerplate") %>
+<%
+  const heading = filters.q ? `Results for “${filters.q}”`
+    : filters.type === "sale" ? "Properties for sale"
+    : filters.type === "rent" ? "Properties for rent"
+    : "Browse properties";
+  const hasFilters = activeFilters.length > 0;
+%>
 
-<style>
-   #filters{
-    display:flex;
-    flex-wrap:wrap;
-    align-items: center;
-
-   }
-   .filter{
-    text-align: center;
-    margin-right: 2rem;
-    margin-top:2rem;
-    opacity: 0.7;
-   }
-   .filter:hover{
-    opacity: 1;
-    cursor: pointer;
-   }
-   .filter p{
-    font: size 0.5em;
-   }
-   .tax-info{
-    display:none;
-   }
-   .tax-toggle{
-    border:1px solid black;
-    border-radius: 1rem;
-    height:3.5rem;
-    padding:1rem;
-    margin-left: 3rem;
-    display: flex;
-    align-items: center;
-   }
-</style>
-     <div id="filters">
-      <div class="filter">
-        <div><i class="fa-solid fa-fire"></i></div>
-        <p>Trending</p>
-         </div>
-      <div class="filter">
-        <div><i class="fa-solid fa-bed"></i></div>
-        <p>Rooms</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-mountain-city"></i></div>
-        <p>Iconic Cities</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-mountain"></i></div>
-        <p>Moutains</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-brands fa-fort-awesome-alt"></i></div>
-        <p>Castles</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-person-swimming"></i></div>
-        <p>Amazing Pools</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-campground"></i></div>
-        <p>Camping</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-tractor"></i></div>
-        <p>Farms</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-snowflake"></i></div>
-        <p>Artice</p>
-         </div>
-         <div class="filter">
-        <div><i class="fa-solid fa-landmark-dome"></i></div>
-        <p>Domes</p>
-         </div>
-         <!-- <div class="filter">
-        <div><i class="fa-solid fa-school"></i></div>
-        <p>Mansion</p>
-         </div> -->
-         <div class="tax-toggle">
-          <div class="form-check-reverse form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-          <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
-         </div>
-         </div>
-        
-         
-     </div>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
-        <% for (let listing of allListings) { %>
-            <a href="/listings/<%=listing._id %>" class="listing-link"><div class="card col listing-card" style="width: 20rem;">
-          <img src="<%=listing.image.url%>" class="card-img-top" alt="listing_image" style="height: 20em;"/>
-  <div class="card-img-overlay"></div>
-  <div class="card-body">
-    <p class="card-text"><b><%= listing.title %></b><br>
-       &#8377;<%= Number(listing.price).toLocaleString("en-IN") %> / night
-       <i class="tax-info"> &nbsp; &nbsp; +18% GST</i>
-    </p><br>
-  </div>
-</div></a>
-    
-<% } %>
+<div class="page-wrap page">
+    <div class="page-head">
+        <div>
+            <h1 style="font-size: clamp(1.8rem, 3.4vw, 2.6rem);"><%= heading %></h1>
+            <p><%= total %> propert<%= total === 1 ? "y" : "ies" %> found</p>
+        </div>
+        <button class="btn btn-ghost d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="<%= hasFilters %>" aria-controls="filters">
+            <i class="fa-solid fa-sliders me-2" aria-hidden="true"></i>Filters
+        </button>
     </div>
-  
-<script>
-  let taxSwitch = document.getElementById("switchCheckDefault");
 
-  taxSwitch.addEventListener("click", () => {
-    let taxInfo = document.getElementsByClassName("tax-info");
-    for(info of taxInfo) {
-      if(info.style.display != "inline"){
-        info.style.display="inline";
-      } else {
-        info.style.display="none";
-      }
-      
-    }
-  });
-</script>
+    <form id="filters" class="filter-card collapse d-md-block <%= hasFilters ? 'show' : '' %>" action="/listings" method="get" role="search" aria-label="Filter properties">
+        <div class="filter-grid">
+            <div class="span-all">
+                <label class="form-label" for="f-q">Location or keyword</label>
+                <input class="form-control" id="f-q" name="q" type="search" maxlength="100" value="<%= filters.q || '' %>" placeholder="City, area, or keyword">
+            </div>
+            <div>
+                <label class="form-label" for="f-type">Listing type</label>
+                <select class="form-select" id="f-type" name="type">
+                    <option value="">Buy or rent</option>
+                    <option value="sale" <%= filters.type === 'sale' ? 'selected' : '' %>>For sale</option>
+                    <option value="rent" <%= filters.type === 'rent' ? 'selected' : '' %>>For rent</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="f-category">Property type</label>
+                <select class="form-select" id="f-category" name="category">
+                    <option value="">Any type</option>
+                    <% for (const c of categories) { %><option value="<%= c %>" <%= filters.category === c ? 'selected' : '' %>><%= c %></option><% } %>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="f-beds">Bedrooms</label>
+                <select class="form-select" id="f-beds" name="beds">
+                    <option value="">Any</option>
+                    <% for (const n of [1, 2, 3, 4]) { %><option value="<%= n %>" <%= filters.beds === n ? 'selected' : '' %>><%= n %>+</option><% } %>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="f-sort">Sort by</label>
+                <select class="form-select" id="f-sort" name="sort">
+                    <option value="newest" <%= filters.sort === 'newest' ? 'selected' : '' %>>Newest first</option>
+                    <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Price: low to high</option>
+                    <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Price: high to low</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-grid--2 filter-grid">
+            <div>
+                <label class="form-label" for="f-min">Min price (₹)</label>
+                <input class="form-control" id="f-min" name="minPrice" type="number" min="0" inputmode="numeric" value="<%= filters.minPrice !== undefined ? filters.minPrice : '' %>" placeholder="No minimum">
+            </div>
+            <div>
+                <label class="form-label" for="f-max">Max price (₹)</label>
+                <input class="form-control" id="f-max" name="maxPrice" type="number" min="0" inputmode="numeric" value="<%= filters.maxPrice !== undefined ? filters.maxPrice : '' %>" placeholder="No maximum">
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-vel" type="submit">Apply filters</button>
+                <% if (hasFilters) { %><a class="btn btn-ghost" href="/listings">Reset</a><% } %>
+            </div>
+        </div>
+    </form>
 
+    <div class="results-bar">
+        <div class="chip-row" aria-label="Active filters">
+            <% for (const f of activeFilters) { %>
+            <a class="chip chip--removable" href="<%= f.remove %>" aria-label="Remove filter <%= f.label %>"><%= f.label %> <i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
+            <% } %>
+        </div>
+        <div class="tax-toggle form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault" data-tax-toggle>
+            <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
+        </div>
+    </div>
 
+    <% if (allListings.length) { %>
+    <div class="card-grid" id="listing-grid">
+        <% for (const listing of allListings) { %><%- include("../includes/listingCard.ejs", { listing, large: false }) %><% } %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+    <nav class="pager" aria-label="Pagination">
+        <% if (page > 1) { %><a href="<%= pageQuery(page - 1) %>" rel="prev" aria-label="Previous page"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></a><% } else { %><span class="disabled" aria-hidden="true"><i class="fa-solid fa-chevron-left"></i></span><% } %>
+        <% for (let n = 1; n <= totalPages; n++) { %>
+            <% if (n === 1 || n === totalPages || Math.abs(n - page) <= 1) { %>
+                <% if (n === page) { %><span class="current" aria-current="page"><%= n %></span><% } else { %><a href="<%= pageQuery(n) %>"><%= n %></a><% } %>
+            <% } else if (Math.abs(n - page) === 2) { %><span class="disabled" aria-hidden="true">…</span><% } %>
+        <% } %>
+        <% if (page < totalPages) { %><a href="<%= pageQuery(page + 1) %>" rel="next" aria-label="Next page"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></a><% } else { %><span class="disabled" aria-hidden="true"><i class="fa-solid fa-chevron-right"></i></span><% } %>
+    </nav>
+    <% } %>
+
+    <% } else { %>
+    <div class="state">
+        <div class="icon"><i class="fa-solid fa-magnifying-glass-location" aria-hidden="true"></i></div>
+        <h2><%= hasFilters ? "No properties match your search" : "No properties listed yet" %></h2>
+        <p><%= hasFilters ? "Try removing a filter or searching a nearby area." : "Be the first to list a property, or run npm run seed to load sample listings." %></p>
+        <div class="actions">
+            <% if (hasFilters) { %><a class="btn btn-vel" href="/listings">Clear all filters</a><% } %>
+            <a class="btn btn-accent" href="/listings/new">List your property</a>
+        </div>
+    </div>
+    <% } %>
+</div>

@@ -1,140 +1,239 @@
 <% layout("/layouts/boilerplate") %>
+<%
+  const owner = listing.owner;
+  const isOwner = Boolean(currUser && owner && owner._id.equals(currUser._id));
+  const stats = ratingStats(listing.reviews);
+  const photos = [...new Set([listing.image && listing.image.url, ...(listing.gallery || [])].filter(Boolean))];
+  if (!photos.length) photos.push("/images/placeholder.svg");
+  const hasBeds = listing.bedrooms !== undefined && listing.bedrooms !== null;
+  const hasBaths = listing.bathrooms !== undefined && listing.bathrooms !== null;
+  const areaText = formatArea(listing.area);
+  const hasCoords = listing.geometry && Array.isArray(listing.geometry.coordinates) && listing.geometry.coordinates.length === 2;
+  const showMap = Boolean(mapToken) && hasCoords;
+%>
+<% if (showMap) { %>
 <script>
-    const mapToken = "<%= process.env.MAP_TOKEN %>";
-    const listing = <%- JSON.stringify(listing) %>;
-    
-
+    const mapToken = <%- JSON.stringify(mapToken).replace(/</g, "\\u003c") %>;
+    const listing = <%- JSON.stringify({ location: listing.location, geometry: listing.geometry }).replace(/</g, "\\u003c") %>;
 </script>
-
-<div class="row mt-3">
-
-    <!-- Title -->
-    <div class="col-8 offset-2">
-        <h3><%= listing.title %></h3>
-    </div>
-
-    <!-- Listing Card -->
-    <div class="card col-6 offset-2 show-card listing-card">
-        <img
-            src="<%= listing.image.url %>"
-            class="card-img-top show-img"
-            alt="listing_image"
-        >
-
-        <div class="card-body">
-            <p class="card-text">Owned by <i><%=listing.owner.username %></i></p>
-            <p class="card-text"><%= listing.description %></p>
-            <p class="card-text">&#8377;<%= listing.price.toLocaleString("en-IN") %></p>
-            <p class="card-text"><%= listing.location %></p>   
-            <p class="card-text"><%= listing.country %></p>    
-            </p>
-        </div>
-    </div>
-
-
-
-
-<% if(currUser && listing.owner._id.equals(currUser._id)) {%>
-<!-- Edit / Delete buttons -->
-<div class="btns">
-    <a
-        href="/listings/<%= listing._id %>/edit"
-        class="btn btn-dark edit-btn"
-    >
-        Edit
-    </a>
-
-    <form
-        method="post"
-        action="/listings/<%= listing._id %>?_method=DELETE"
-    >
-        <button class="btn btn-dark">
-            Delete
-        </button>
-    </form>
-</div>
-
 <% } %>
 
+<div class="page-wrap page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><a href="/listings">Properties</a><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><span><%= listing.title %></span>
+    </nav>
 
+    <div class="detail-head">
+        <div>
+            <h1><%= listing.title %></h1>
+            <p class="detail-loc"><i class="fa-solid fa-location-dot" aria-hidden="true"></i><%= listing.location %>, <%= listing.country %></p>
+        </div>
+        <div class="meta-row">
+            <span class="badge-v <%= listing.listingType === 'sale' ? 'badge-v--sale' : 'badge-v--rent' %>" style="border:1px solid var(--line)"><%= listingTypeLabel(listing) %></span>
+            <span class="badge-v" style="border:1px solid var(--line)"><%= listing.category %></span>
+            <% if (stats.count) { %>
+            <span class="rating-pill"><i class="fa-solid fa-star" aria-hidden="true"></i><%= stats.average.toFixed(1) %> <a href="#reviews">(<%= stats.count %>)</a></span>
+            <% } %>
+        </div>
+    </div>
 
-<!-- Review Section -->
-<div class="col-8 offset-2 mb-3">
- <% if(currUser) {%>
-    <h4>Leave a Review</h4>
+    <!-- Gallery -->
+    <section class="gallery" aria-label="Property photos" data-gallery>
+        <button type="button" class="gallery__main" data-bs-toggle="modal" data-bs-target="#lightbox" aria-label="Open photo full size">
+            <img src="<%= optimizeImage(photos[0], 1400, 788) %>" alt="<%= listing.title %>, main photo" data-gallery-main onerror="this.onerror=null;this.src='/images/placeholder.svg'">
+            <span class="gallery__zoom"><i class="fa-solid fa-expand" aria-hidden="true"></i>View larger</span>
+        </button>
+        <% if (photos.length > 1) { %>
+        <div class="gallery__thumbs" role="list">
+            <% photos.forEach((url, i) => { %>
+            <button type="button" role="listitem" class="gallery__thumb <%= i === 0 ? 'is-active' : '' %>" data-gallery-thumb data-full="<%= optimizeImage(url, 1400, 788) %>" data-original="<%= url %>" aria-label="Show photo <%= i + 1 %> of <%= photos.length %>">
+                <img src="<%= optimizeImage(url, 224, 168) %>" alt="" loading="lazy" onerror="this.onerror=null;this.src='/images/placeholder.svg'">
+            </button>
+            <% }) %>
+        </div>
+        <% } %>
+    </section>
 
-    <form action="/listings/<%=listing._id%>/reviews" method="post" novalidate class="needs-validation">
-        <div class="mb-3 mt-3">
-            <label for="rating" class="form-label">
-                Rating
-            </label>
- <fieldset class="starability-slot">
+    <div class="detail-grid">
+        <div>
+            <!-- Overview -->
+            <section class="detail-section" aria-labelledby="overview-title">
+                <h2 id="overview-title">Overview</h2>
+                <div class="fact-grid">
+                    <% if (hasBeds) { %><div class="fact"><i class="fa-solid fa-bed" aria-hidden="true"></i><strong><%= listing.bedrooms === 0 ? "Studio" : listing.bedrooms %></strong><span>Bedrooms</span></div><% } %>
+                    <% if (hasBaths) { %><div class="fact"><i class="fa-solid fa-bath" aria-hidden="true"></i><strong><%= listing.bathrooms %></strong><span>Bathrooms</span></div><% } %>
+                    <% if (areaText) { %><div class="fact"><i class="fa-solid fa-ruler-combined" aria-hidden="true"></i><strong><%= areaText %></strong><span>Area</span></div><% } %>
+                    <div class="fact"><i class="fa-solid fa-building" aria-hidden="true"></i><strong><%= listing.category %></strong><span>Property type</span></div>
+                    <div class="fact"><i class="fa-solid fa-tag" aria-hidden="true"></i><strong><%= listingTypeLabel(listing) %></strong><span>Listing type</span></div>
+                </div>
+            </section>
 
-  <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
-  <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-  <label for="first-rate1" title="Terrible">1 star</label>
-  <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-  <label for="first-rate2" title="Not good">2 stars</label>
-  <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-  <label for="first-rate3" title="Average">3 stars</label>
-  <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-  <label for="first-rate4" title="Very good">4 stars</label>
-  <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-  <label for="first-rate5" title="Amazing">5 stars</label>
-</fieldset>
+            <section class="detail-section" aria-labelledby="about-title">
+                <h2 id="about-title">About this property</h2>
+                <p class="prose"><%= listing.description %></p>
+            </section>
+
+            <% if (listing.amenities && listing.amenities.length) { %>
+            <section class="detail-section" aria-labelledby="amenities-title">
+                <h2 id="amenities-title">Amenities</h2>
+                <ul class="amenities">
+                    <% for (const a of listing.amenities) { %><li><i class="fa-solid fa-check" aria-hidden="true"></i><%= a %></li><% } %>
+                </ul>
+            </section>
+            <% } %>
+
+            <!-- Reviews -->
+            <section class="detail-section" id="reviews" aria-labelledby="reviews-title">
+                <h2 id="reviews-title">Reviews</h2>
+
+                <% if (stats.count) { %>
+                <div class="review-summary">
+                    <div class="review-score"><%= stats.average.toFixed(1) %><small>out of 5</small></div>
+                    <div>
+                        <p class="starability-result" data-rating="<%= Math.round(stats.average) %>" aria-label="Rated <%= stats.average.toFixed(1) %> out of 5">Rated <%= Math.round(stats.average) %> stars</p>
+                        <span class="text-muted-v"><%= stats.count %> review<%= stats.count === 1 ? "" : "s" %></span>
+                    </div>
+                </div>
+                <% } %>
+
+                <% if (currUser) { %>
+                <div class="review-form-box">
+                    <h3>Leave a review</h3>
+                    <p class="text-muted-v mb-3">Share what you liked, or what could be better, to help other people decide.</p>
+                    <form action="/listings/<%= listing._id %>/reviews" method="post" novalidate class="needs-validation">
+                        <fieldset class="starability-slot">
+                            <legend class="form-label">Your rating</legend>
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                        </fieldset>
+                        <div class="mb-3 mt-2">
+                            <label for="comment" class="form-label">Your comments</label>
+                            <textarea name="review[comment]" id="comment" rows="4" maxlength="1500" class="form-control" required placeholder="What was your experience of this property?"></textarea>
+                            <div class="invalid-feedback">Please write a few words about the property.</div>
+                        </div>
+                        <button class="btn btn-vel" type="submit" data-loading="Posting…">Post review</button>
+                    </form>
+                </div>
+                <% } else { %>
+                <div class="empty-inline">
+                    <a href="/login">Log in</a> or <a href="/signup">create an account</a> to leave a review.
+                </div>
+                <% } %>
+
+                <% if (listing.reviews.length) { %>
+                <div class="review-list">
+                    <% for (const review of listing.reviews) { %>
+                    <%
+                      const author = review.author;
+                      const canDelete = Boolean(currUser && author && author._id.equals(currUser._id));
+                      const name = author ? author.username : "Former user";
+                    %>
+                    <article class="review">
+                        <header>
+                            <div class="who"><span class="avatar" aria-hidden="true"><%= name.charAt(0).toUpperCase() %></span><span><%= name %></span></div>
+                            <div class="d-flex align-items-center gap-3">
+                                <% if (review.createdAt) { %><time datetime="<%= new Date(review.createdAt).toISOString() %>"><%= new Date(review.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) %></time><% } %>
+                                <p class="starability-result" data-rating="<%= review.rating %>">Rated <%= review.rating %> stars</p>
+                            </div>
+                        </header>
+                        <p><%= review.comment %></p>
+                        <% if (canDelete) { %>
+                        <form class="mt-3" method="post" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" data-confirm="Delete your review? This can't be undone.">
+                            <button class="btn btn-sm btn-danger-ghost" type="submit"><i class="fa-regular fa-trash-can me-2" aria-hidden="true"></i>Delete review</button>
+                        </form>
+                        <% } %>
+                    </article>
+                    <% } %>
+                </div>
+                <% } else { %>
+                <div class="empty-inline mt-3">No reviews yet. Be the first to share your experience.</div>
+                <% } %>
+            </section>
+
+            <!-- Map -->
+            <section class="detail-section" aria-labelledby="map-title">
+                <h2 id="map-title">Where you’ll be</h2>
+                <% if (showMap) { %>
+                <div id="map" role="img" aria-label="Map showing the approximate location of <%= listing.title %>"></div>
+                <% } else { %>
+                <div class="map-fallback"><i class="fa-solid fa-map-location-dot me-2" aria-hidden="true"></i>The map is not available right now. This property is in <%= listing.location %>, <%= listing.country %>.</div>
+                <% } %>
+            </section>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="detail-aside" aria-label="Price and listing owner">
+            <div class="panel price-card">
+                <p class="price"><%= priceLabel(listing) %><% if (priceSuffix(listing)) { %><small><%= priceSuffix(listing) %></small><% } %></p>
+                <p class="price-sub"><%= listing.listingType === "sale" ? "Asking price" : "Monthly rent" %></p>
+
+                <% if (owner) { %>
+                <div class="agent">
+                    <span class="avatar" aria-hidden="true"><%= owner.username.charAt(0).toUpperCase() %></span>
+                    <div><span>Listed by</span><strong><%= owner.username %></strong></div>
+                </div>
+                <% } %>
+
+                <% if (isOwner) { %>
+                <div class="owner-actions">
+                    <h3>Manage your listing</h3>
+                    <a class="btn btn-vel" href="/listings/<%= listing._id %>/edit"><i class="fa-regular fa-pen-to-square me-2" aria-hidden="true"></i>Edit listing</a>
+                    <button class="btn btn-danger-ghost" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="fa-regular fa-trash-can me-2" aria-hidden="true"></i>Delete listing</button>
+                </div>
+                <% } else if (!currUser) { %>
+                <div class="owner-actions">
+                    <a class="btn btn-vel" href="/login">Log in to leave a review</a>
+                </div>
+                <% } else { %>
+                <div class="owner-actions">
+                    <a class="btn btn-ghost" href="#reviews">Write a review</a>
+                </div>
+                <% } %>
+            </div>
+        </aside>
+    </div>
 </div>
 
-
-        <!-- Comment -->
-        <div class="mb-3 mt-3">
-            <label for="comment" class="form-label">
-                Comment
-            </label>
-
-            <textarea
-                name="review[comment]"
-                id="comment"
-                rows="5"
-                class="form-control"
-                required
-            ></textarea>
-            <div class="invalid-feedback">Please submit some reviews</div>
+<!-- Lightbox -->
+<div class="modal fade lightbox" id="lightbox" tabindex="-1" aria-label="Property photo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <button type="button" class="btn-close btn-close-white ms-auto mb-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            <img src="" alt="<%= listing.title %>" data-lightbox-img>
         </div>
-        
-        <button class="btn btn-outline-dark">
-            Submit
-        </button>
+    </div>
+</div>
 
-    </form>
-    <% } %>
-    <hr>
-    <% if(listing.reviews.length > 0) {%>
-    <div class="row">
-        <p><b>All Reviews</b></p>
-     <%  for(review of listing.reviews) { %>
-        <div class="card col-5 ms-3 mb-3">
-            <div class="card-body">
-                <h5 class="card-title"><%= review.author.username%></h5>
-                <p class="card-text"><%=review.comment%></p>
-                 <p class="starability-result card-text" data-rating="<%=review.rating%>"></p>
-                <form class="mb-3" method="post" action="/listings/<%=listing._id%>/reviews/<%= review._id%>?_method=DELETE">
-                    <button class="btn btn-sm btn-dark">Delete</button>
+<% if (isOwner) { %>
+<!-- Delete confirmation -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: var(--r-lg)">
+            <div class="modal-header border-0 pb-0">
+                <h2 class="modal-title fs-4" id="deleteModalTitle">Delete this listing?</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">“<%= listing.title %>” and its <%= listing.reviews.length %> review<%= listing.reviews.length === 1 ? "" : "s" %> will be permanently removed. This can’t be undone.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Keep listing</button>
+                <form method="post" action="/listings/<%= listing._id %>?_method=DELETE">
+                    <button class="btn btn-danger-solid" type="submit" data-loading="Deleting…">Delete listing</button>
                 </form>
             </div>
-
         </div>
-     
-      <% } %>
     </div>
-    <% } %>
 </div>
-<div class="col-8 offset-2 mb-3">
-    <h3>Where you'll be</h3>
-    <div id="map">
+<% } %>
 
-    </div> 
-
-</div>
-
-</div>
-<script src="/js/map.js"></script>
+<% if (showMap) { %><script src="/js/map.js"></script><% } %>
