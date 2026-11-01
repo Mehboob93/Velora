@@ -18,9 +18,9 @@ const User = require("./models/user.js");
 
 app.use(cookieParser());
 
-const listingsRouter = require("./Rotues/listing.js");
-const reviewsRouter = require("./Rotues/reviews.js");
-const userRouter = require("./Rotues/user.js");
+const listingsRouter = require("./Routes/listing.js");
+const reviewsRouter = require("./Routes/reviews.js");
+const userRouter = require("./Routes/user.js");
 
 
 const dbUrl = process.env.ATLASDB_URL;
@@ -51,8 +51,8 @@ const store = MongoStore.create({
     touchAfter: 24 * 3600,
 });
 
-store.on("error", () =>{
-    console.log("Error in Mongo SESSION",err);
+store.on("error", (err) =>{
+    console.log("Error in Mongo SESSION", err);
 });
 
 const sessionOptions = {
@@ -67,9 +67,6 @@ const sessionOptions = {
     },
 };
 
-// app.get("/", (req,res) => {
-//     res.send("I am Home page");
-// });
 
 
 app.use(session(sessionOptions));
@@ -89,19 +86,11 @@ app.use((req, res, next) =>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
+    res.locals.currentPath = req.path;
+    res.locals.currentType = "";
     next();
 });
 
-// app.get("/demouser",async(req,res) => {
-//     let fakeUser = new User({
-//         email:"Student@gmail.com",
-//         username:"Sigma-Student"
-//     });
-
-//     let registeredUser = await User.register(fakeUser, "helloworld");
-//     res.send(registeredUser);
-
-// });
 
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
@@ -117,6 +106,7 @@ app.use((err,req,res,next) =>{
    
 });
 
-app.listen(8080, () => {
-    console.log("Server is listening on port 8080");
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+    console.log(`Server is listening on port ${port}`);
 });
