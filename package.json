@@ -1,11 +1,10 @@
 {
   "engines": {
     "node": "v24.19.0"
-
   },
   "name": "majorproject",
   "version": "1.0.0",
-  "description": "",
+  "description": "Velora - a property listing marketplace built with Express, MongoDB and EJS",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
